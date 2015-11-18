@@ -1,0 +1,304 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ROOT>
+    <TERMINALS>
+        <TERM name="space" class="DELIMETER"> </TERM>
+        <TERM name="open parenthesis" class="DELIMETER">(</TERM>
+        <TERM name="close parenthesis" class="DELIMETER">)</TERM>
+        <TERM name="multiply" class="SIGN">*</TERM>
+        <TERM name="add" class="SIGN">+</TERM>
+        <TERM name="comma" class="DELIMETER">,</TERM>
+        <TERM name="substract" class="SIGN">-</TERM>
+        <TERM name="dot" class="DELIMETER">.</TERM>
+        <TERM name="divide" class="SIGN">/</TERM>
+        <TERM name="colon" class="DELIMETER">:</TERM>
+        <TERM name="assign" class="DELIMETER">:=</TERM>
+        <TERM name="semicolon" class="DELIMETER">;</TERM>
+        <TERM name="less" class="SIGN">&lt;</TERM>
+        <TERM name="lessorequal" class="SIGN">&lt;=</TERM>
+        <TERM name="notequal" class="SIGN">&lt;&gt;</TERM>
+        <TERM name="equal" class="SIGN">=</TERM>
+        <TERM name="more" class="SIGN">&gt;</TERM>
+        <TERM name="moreorequal" class="SIGN">&gt;=</TERM>
+        <TERM name="begin" class="KEYWORD">begin</TERM>
+        <TERM name="case" class="KEYWORD">case</TERM>
+        <TERM name="do" class="KEYWORD">do</TERM>
+        <TERM name="else" class="KEYWORD">else</TERM>
+        <TERM name="end" class="KEYWORD">end</TERM>
+        <TERM name="for" class="KEYWORD">for</TERM>
+        <TERM name="goto" class="KEYWORD">goto</TERM>
+        <TERM name="if" class="KEYWORD">if</TERM>
+        <TERM name="integer" class="KEYWORD">integer</TERM>
+        <TERM name="of" class="KEYWORD">of</TERM>
+        <TERM name="procedure" class="KEYWORD">procedure</TERM>
+        <TERM name="program" class="KEYWORD">program</TERM>
+        <TERM name="readln" class="KEYWORD">readln</TERM>
+        <TERM name="real" class="KEYWORD">real</TERM>
+        <TERM name="repeat" class="KEYWORD">repeat</TERM>
+        <TERM name="string" class="KEYWORD">string</TERM>
+        <TERM name="then" class="KEYWORD">then</TERM>
+        <TERM name="to" class="KEYWORD">to</TERM>
+        <TERM name="until" class="KEYWORD">until</TERM>
+        <TERM name="var" class="KEYWORD">var</TERM>
+        <TERM name="writeln" class="KEYWORD">writeln</TERM>
+    </TERMINALS>
+    <RULES>
+        <RULE name="real number">
+            <seq>
+                <class>NUMBER</class>
+                <term>dot</term>
+                <class>NUMBER</class>
+            </seq>
+        </RULE>
+        <RULE name="number">
+            <seq choices="true">
+                <rule>real number</rule>
+                <class>NUMBER</class>
+            </seq>
+        </RULE>
+        <RULE name="label">
+            <seq>
+                <class>NUMBER</class>
+            </seq>
+        </RULE>
+        <RULE name="operators body">
+            <seq choices="true">
+                <rule>operator</rule>
+                <seq>
+                    <term>begin</term>
+                    <rule>oper list</rule>
+                    <term>end</term>
+                </seq>
+            </seq>
+        </RULE>
+        <RULE name="options list">
+            <seq iterative="true">
+                <rule>label</rule>
+                <term>colon</term>
+                <rule>operators body</rule>
+                <term>semicolon</term>
+            </seq>
+        </RULE>
+        <RULE name="switch">
+            <seq>
+                <term>case</term>
+                <rule>simple expr</rule>
+                <term>of</term>
+                <rule>options list</rule>
+                <term>end</term>
+            </seq>
+        </RULE>
+        <RULE name="repeat cycle">
+            <seq>
+                <term>repeat</term>
+                <rule>oper list</rule>
+                <term>until</term>
+                <rule>logical expr</rule>
+            </seq>
+        </RULE>
+        <RULE name="inner block">
+            <seq choices="true">
+                <rule>operator</rule>
+                <rule>block</rule>
+            </seq>
+        </RULE>
+        <RULE name="for cycle">
+            <seq>
+                <term>for</term>
+                <rule>assign</rule>
+                <term>to</term>
+                    <seq choices="true">
+                        <rule>number</rule>
+                        <class>TEXT</class>
+                    </seq>
+                <term>do</term>
+                <rule>inner block</rule>
+            </seq>
+        </RULE>
+        <RULE name="condition">
+            <seq>
+                <term>if</term>
+                <rule>logical expr</rule>
+                <term>then</term>
+                    <rule>inner block</rule>
+                <seq optional="true">
+                    <term>else</term>
+                    <rule>inner block</rule>
+                </seq>
+            </seq>
+        </RULE>
+        <RULE name="goto">
+            <seq>
+                <term>goto</term>
+                <rule>label</rule>
+            </seq>
+        </RULE>
+        <RULE name="forward vars">
+            <seq>
+                <term>open parenthesis</term>
+                <rule>names list</rule>
+                <term>close parenthesis</term>
+            </seq>
+        </RULE>
+        <RULE name="proc names">
+            <seq choices="true">
+                <term>writeln</term>
+                <term>readln</term>
+            </seq>
+        </RULE>
+        <RULE name="proc call">
+            <seq>
+                <rule>proc names</rule>
+                <rule>forward vars</rule>
+            </seq>
+        </RULE>
+        <RULE name="factor">
+            <seq choices="true">
+                <class>TEXT</class>
+                <rule>number</rule>
+                <seq>
+                    <term>open parenthesis</term>
+                    <rule>simple expr</rule>
+                    <term>close parenthesis</term>
+                </seq>
+            </seq>
+        </RULE>
+        <RULE name="term">
+            <seq>
+                <rule>factor</rule>
+                <seq iterative="true" optional="true">
+                    <seq choices="true">
+                        <term>multiply</term>
+                        <term>divide</term>
+                    </seq>
+                    <rule>factor</rule>
+                </seq>
+            </seq>
+        </RULE>
+        <RULE name="simple expr">
+            <seq>
+                <rule>term</rule>
+                <seq iterative="true" optional="true">
+                    <seq choices="true">
+                        <term>add</term>
+                        <term>substract</term>
+                    </seq>
+                    <rule>term</rule>
+                </seq>
+            </seq>
+        </RULE>
+        <RULE name="logical expr">
+            <seq>
+                <rule>simple expr</rule>
+                <seq choices="true">
+                    <term>less</term>
+                    <term>lessorequal</term>
+                    <term>notequal</term>
+                    <term>equal</term>
+                    <term>more</term>
+                    <term>moreorequal</term>
+                </seq>
+                <rule>simple expr</rule>
+            </seq>
+        </RULE>
+        <RULE name="assign">
+            <seq>
+                <class>TEXT</class>
+                <term>assign</term>
+                <rule>simple expr</rule>
+            </seq>
+        </RULE>
+        <RULE name="operator">
+            <seq choices="true">
+                <rule>assign</rule>
+                <rule>proc call</rule>
+                <rule>repeat cycle</rule>
+                <rule>for cycle</rule>
+                <rule>switch</rule>
+                <rule>condition</rule>
+                <rule>goto</rule>
+            </seq>
+        </RULE>
+        <RULE name="oper list">
+            <seq iterative="true">
+                <seq optional="true">
+                    <rule>label</rule>
+                    <term>colon</term>
+                </seq>
+                <rule>operator</rule>
+                <term>semicolon</term>
+            </seq>
+        </RULE>
+        <RULE name="names list">
+            <seq>
+                <class>TEXT</class>
+                <seq iterative="true" optional="true">
+                    <term>comma</term>
+                    <class>TEXT</class>
+                </seq>
+            </seq>
+        </RULE>
+        <RULE name="var type">
+            <seq choices="true">
+                <term>integer</term>
+                <term>real</term>
+                <term>string</term>
+            </seq>
+        </RULE>
+        <RULE name="description">
+            <seq>
+                <rule>names list</rule>
+                <term>colon</term>
+                <rule>var type</rule>
+            </seq>
+        </RULE>
+        <RULE name="descr list">
+            <seq>
+                <term>var</term>
+                <seq iterative="true">
+                    <rule>description</rule>
+                    <term>semicolon</term>
+                </seq>
+            </seq>
+        </RULE>
+        <RULE name="block">
+            <seq>
+                <term>begin</term>
+                <rule>oper list</rule>
+                <term>end</term>
+            </seq>
+        </RULE>
+        <RULE name="procedure">
+            <seq>
+                <term>procedure</term>
+                <class>TEXT</class>
+                <term>semicolon</term>
+                <seq optional="true">
+                    <rule>descr list</rule>
+                </seq>
+                <rule>block</rule>
+                <term>semicolon</term>
+            </seq>
+        </RULE>
+        <RULE name="proc list">
+            <seq iterative="true">
+                <rule>procedure</rule>
+                <term>semicolon</term>
+            </seq>
+        </RULE>
+        <RULE name="program">
+            <seq>
+                <term>program</term>
+                <class>TEXT</class>
+                <term>semicolon</term>
+                <seq optional="true">
+                    <rule>descr list</rule>
+                </seq>
+                <seq optional="true">
+                    <rule>proc list</rule>
+                </seq>
+                <rule>block</rule>
+                <term>dot</term>
+            </seq>
+        </RULE>
+    </RULES>
+</ROOT>

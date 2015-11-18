@@ -1,0 +1,75 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<!--Created with Liquid XML Studio Developer Edition 9.0.11.3078 (http://www.liquid-technologies.com)-->
+<xs:schema xmlns:tns="llsp" elementFormDefault="qualified" xmlns:xs="http://www.w3.org/2001/XMLSchema">
+    <xs:simpleType name="TermCategory" final="#all">
+        <xs:restriction base="xs:token">
+            <xs:enumeration value="KEYWORD" />
+            <xs:enumeration value="SIGN" />
+            <xs:enumeration value="DELIMETER" />
+            <xs:enumeration value="WORD" />
+            <xs:enumeration value="NUMBER" />
+        </xs:restriction>
+    </xs:simpleType>
+    <xs:complexType name="Term">
+        <xs:sequence>
+            <xs:element name="name" type="xs:token" minOccurs="1" maxOccurs="1">
+                <xs:key name="termType">
+                    <xs:selector xpath="termType" />
+                    <xs:field xpath="tns:termType" />
+                </xs:key>
+            </xs:element>
+            <xs:element name="category" type="TermCategory" minOccurs="1" maxOccurs="1" />
+            <xs:element name="value" minOccurs="1" maxOccurs="1">
+                <xs:simpleType>
+                    <xs:restriction base="xs:string">
+                        <xs:minLength value="1" />
+                    </xs:restriction>
+                </xs:simpleType>
+            </xs:element>
+        </xs:sequence>
+    </xs:complexType>
+    <xs:element name="termTypes">
+        <xs:complexType>
+            <xs:choice>
+                <xs:element name="term" type="Term" minOccurs="1" maxOccurs="unbounded" />
+            </xs:choice>
+        </xs:complexType>
+    </xs:element>
+    <xs:attributeGroup name="modifiers">
+        <xs:attribute name="iterative" type="xs:boolean" default="false" use="optional" />
+        <xs:attribute name="choices" type="xs:boolean" default="false" use="optional" />
+    </xs:attributeGroup>
+    <xs:complexType name="GrammarRule">
+        <xs:sequence>
+            <xs:choice>
+                <xs:element name="sequence" type="GrammarRule" />
+                <xs:element name="value" type="Term" />
+                <xs:element name="innerRule">
+                    <xs:complexType>
+                        <xs:complexContent>
+                            <xs:extension base="GrammarRule">
+                                <xs:attribute name="innerName" type="xs:Name" />
+                            </xs:extension>
+                        </xs:complexContent>
+                    </xs:complexType>
+                </xs:element>
+            </xs:choice>
+        </xs:sequence>
+        <xs:attributeGroup ref="modifiers" />
+    </xs:complexType>
+    <xs:element name="Grammar">
+        <xs:complexType>
+            <xs:choice minOccurs="1" maxOccurs="unbounded">
+                <xs:element name="rule">
+                    <xs:complexType>
+                        <xs:complexContent>
+                            <xs:extension base="GrammarRule">
+                                <xs:attribute name="name" type="xs:Name" />
+                            </xs:extension>
+                        </xs:complexContent>
+                    </xs:complexType>
+                </xs:element>
+            </xs:choice>
+        </xs:complexType>
+    </xs:element>
+</xs:schema>
