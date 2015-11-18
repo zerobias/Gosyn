@@ -1,10 +1,10 @@
 package controller
 
 import (
-	"llsp/lexer"
-	//"llsp/models"
-	. "llsp/testingtools"
-	"llsp/utils"
+	"gosyn/lexer"
+	//"gosyn/models"
+	. "gosyn/testingtools"
+	"gosyn/utils"
 	"testing"
 )
 

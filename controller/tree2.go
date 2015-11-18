@@ -1,8 +1,8 @@
 package controller
 
 import (
-	"llsp/lexer"
-	"llsp/models"
+	"gosyn/lexer"
+	"gosyn/models"
 )
 
 type SchemaData interface {
@@ -34,9 +34,9 @@ type DataContainer struct {
 	dataType models.DataType
 }
 
-func (dc *DataContainer) IsObject() bool {
+/*func (dc *DataContainer) IsObject() bool {
 
-}
+}*/
 
 type value struct {
 	value string
@@ -48,11 +48,11 @@ type (
 	DRule  value
 )
 
-func (v *value) Value() string {
+/*func (v *value) Value() string {
 	return v.value
-}
+}*/
 
-/*func (dc *DClass) Value() string {
+func (dc *DClass) Value() string {
 	return dc.value
 }
 
@@ -62,7 +62,7 @@ func (dt *DTerm) Value() string {
 
 func (dr *DRule) Value() string {
 	return dr.value
-}*/
+}
 
 //Flyweight Data Type. Does not consume memory
 func (dc DClass) DataType() models.DataType {

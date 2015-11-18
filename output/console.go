@@ -3,9 +3,9 @@ package output
 import (
 	//"io"
 	//"bufio"
-	//"llsp/debug"
-	"llsp/models"
-	. "llsp/output/colorman"
+	//"gosyn/debug"
+	"gosyn/models"
+	. "gosyn/output/colorman"
 	//"strconv"
 	//"encoding/xml"
 	"strings"

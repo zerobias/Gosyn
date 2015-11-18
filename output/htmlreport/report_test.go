@@ -1,17 +1,17 @@
 package htmlreport
 
 import (
-	//"llsp/controller"
-	. "llsp/models"
+	//"gosyn/controller"
+	. "gosyn/models"
 	//"bufio"
 	// "io"
 	// "io/ioutil"
 	//"bytes"
 	"fmt"
-	//"llsp/output"
-	"llsp/utils"
+	//"gosyn/output"
+	"gosyn/utils"
 	//"strconv"
-	. "llsp/testingtools"
+	. "gosyn/testingtools"
 	"strings"
 	"testing"
 )

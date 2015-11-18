@@ -1,11 +1,11 @@
 package htmlreport
 
 import (
-//"llsp/controller"
+//"gosyn/controller"
 //	"html"
-//"llsp/models"
+//"gosyn/models"
 //"fmt"
-//"llsp/output"
+//"gosyn/output"
 //"strconv"
 //"strings"
 )

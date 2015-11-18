@@ -3,10 +3,10 @@ package lexer
 import (
 	"bytes"
 	"fmt"
-	//"llsp/debug"
-	//"llsp/models"
-	//"llsp/output"
-	//. "llsp/output/colorman"
+	//"gosyn/debug"
+	//"gosyn/models"
+	//"gosyn/output"
+	//. "gosyn/output/colorman"
 	"strconv"
 	//"strings"
 )

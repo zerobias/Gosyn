@@ -2,7 +2,7 @@ package lexer
 
 import (
 	//"fmt"
-	. "llsp/testingtools"
+	. "gosyn/testingtools"
 	"reflect"
 	"testing"
 )

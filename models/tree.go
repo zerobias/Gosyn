@@ -2,7 +2,7 @@ package models
 
 import (
 	//"fmt"
-	"llsp/lexer"
+	"gosyn/lexer"
 )
 
 type PTreeNode *TreeNode

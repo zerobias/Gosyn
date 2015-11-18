@@ -3,8 +3,8 @@ package debug
 import (
 	"fmt"
 	//"io"
-	"llsp/lexer"
-	"llsp/models"
+	"gosyn/lexer"
+	"gosyn/models"
 	"os"
 	"reflect"
 	"strconv"

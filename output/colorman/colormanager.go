@@ -3,8 +3,8 @@ package colorman
 import (
 	//"io"
 	//"bufio"
-	//"llsp/debug"
-	//"llsp/models"
+	//"gosyn/debug"
+	//"gosyn/models"
 	"strconv"
 	"strings"
 )

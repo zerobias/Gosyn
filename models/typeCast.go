@@ -3,8 +3,8 @@ package models
 import (
 	//"encoding/xml"
 	"fmt"
-	"llsp/lexer"
-	"llsp/output/colorman"
+	"gosyn/lexer"
+	"gosyn/output/colorman"
 	"reflect"
 	"strconv"
 )

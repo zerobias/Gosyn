@@ -2,12 +2,12 @@ package main
 
 import (
 	"fmt"
-	"llsp/controller"
-	//"llsp/models"
-	"llsp/lexer"
-	"llsp/output"
-	"llsp/output/htmlreport"
-	"llsp/utils"
+	"gosyn/controller"
+	//"gosyn/models"
+	"gosyn/lexer"
+	"gosyn/output"
+	"gosyn/output/htmlreport"
+	"gosyn/utils"
 )
 
 func main() {

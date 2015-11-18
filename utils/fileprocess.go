@@ -6,14 +6,14 @@ import (
 	"io/ioutil"
 	//"log"
 	//"bytes"
-	"llsp/debug"
-	"llsp/lexer"
-	"llsp/models"
+	"gosyn/debug"
+	"gosyn/lexer"
+	"gosyn/models"
 	"os"
 	//"strings"
 	//"unicode/utf8"
 	"encoding/xml"
-	//"llsp/output"
+	//"gosyn/output"
 	"bufio"
 )
 

@@ -3,10 +3,10 @@ package controller
 import (
 	//"errors"
 	"fmt"
-	"llsp/lexer"
-	"llsp/models"
-	"llsp/output"
-	. "llsp/output/colorman"
+	"gosyn/lexer"
+	"gosyn/models"
+	"gosyn/output"
+	. "gosyn/output/colorman"
 	/*"log"
 	"os"
 	"os/exec"*/

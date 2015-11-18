@@ -2,10 +2,10 @@ package controller
 
 import (
 	"errors"
-	"llsp/lexer"
-	"llsp/models"
-	"llsp/output"
-	. "llsp/output/colorman"
+	"gosyn/lexer"
+	"gosyn/models"
+	"gosyn/output"
+	. "gosyn/output/colorman"
 	"strconv"
 	"strings"
 )
