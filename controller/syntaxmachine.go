@@ -19,6 +19,7 @@ var (
 	seq lexer.LexemeSequence
 )
 
+//Init and control of parsing
 func SyntaxCycle(sequence *lexer.LexemeSequence, syntaxRules []models.Rule) models.PTreeNode {
 	//source = *sequence.Transform()
 	seq = *sequence
@@ -59,6 +60,7 @@ func isError(e error) bool {
 	}
 }
 
+//Main syntax parsing function
 func Translate(word *models.StringElement, parentCursor *SeqIterator) (result bool) {
 	deepInc()
 	defer deepDec()
