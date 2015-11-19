@@ -1,5 +1,5 @@
 # Gosyn
-Golang universal syntactic and lexical parser of programming language. Description syntax through XML, validation through XLST-scheme
+Golang universal syntactic and lexical parser of programming language. Description syntax through XML, validation through XSD Schema
 
 Parse text file to the syntax tree.
 
