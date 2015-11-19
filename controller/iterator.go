@@ -3,7 +3,7 @@ package controller
 import (
 	"errors"
 	"gosyn/lexer"
-	"gosyn/models"
+	//"gosyn/models"
 	"gosyn/output"
 	. "gosyn/output/colorman"
 	"strconv"
@@ -59,10 +59,10 @@ func (i *SeqIterator) ApplyToParent() {
 	//output.Par.Send(0, COL_DEEP_LIM, "APPLY", string(i.parent.buffer.Type()), strings.TrimSpace(i.parent.buffer.Value), i.buffer.Type())
 }
 
-func (i *SeqIterator) AddToParent(word *models.StringElement, lex *lexer.Lexeme) {
+func (i *SeqIterator) AddToParent(step *Step, lex *lexer.Lexeme) {
 	i.Inc()
 	i.parent.int = i.int
-	i.parent.buffer.AddText(word, lex)
+	i.parent.buffer.AddText(step, lex)
 	//output.Par.Send(0, COL_DEEP_LIM, "ADD", string(i.parent.buffer.Type()), strings.TrimSpace(i.parent.buffer.Value), i.parent.int, i.buffer.Value)
 	//i.parent.Inc()
 }

@@ -10,7 +10,7 @@ import (
 	/*"log"
 	"os"
 	"os/exec"*/
-	"strconv"
+	//"strconv"
 )
 
 var (
@@ -75,31 +75,18 @@ func Translate(step *Step, parentCursor *SeqIterator) (result bool) {
 		return false
 	}
 	//fmt.Println("Element ", (*element.Value).String())
-	cursor.buffer.StringElement = *word
-	result = step.RuleMatch(parentCursor)
-	switch step.StepType() {
+	cursor.buffer.step = step
+	result = (*step).RuleMatch(parentCursor)
+	/*switch step.StepType() {
 	case models.ST_CLASS:
-		output.Par.SendPair(deep-1, COL_BLUE_B, "CLASS", word.Value,
-			"curs.i", strconv.Itoa(cursor.int), (*element.Value).String())
 		result = lexer.GetClassByName(word.Value) == element.Cat
 	case models.ST_TERM:
-		output.Par.SendPair(deep-1, COL_BLUE_B, "TERM", word.Value, (*element.Value).String())
 		result = element.Name == word.Value
 	case models.ST_RULE:
-		output.Par.Send(deep-1, COL_BLUE_B, "RULE", word.Value)
 		result = Translate(&GetRule(word.Value).TopWord, cursor)
 	case models.ST_SEQ:
-		output.Par.SendPair(deep, COL_BLUE_U, "SEQ", deep,
-			"O", word.Optional,
-			"C", word.Choises, "I", word.Iterative)
 		checkChilds := func(curs *SeqIterator) bool {
-			isLast := func(n int) bool {
-				if n == len(word.Words)-1 {
-					return true
-				} else {
-					return false
-				}
-			}
+			isLast := func(n int) bool { return n == len(word.Words)-1 }
 			for i, child := range word.Words {
 				childResult := Translate(&child, curs)
 				if word.Choises {
@@ -150,16 +137,16 @@ func Translate(step *Step, parentCursor *SeqIterator) (result bool) {
 			cursor.buffer.XMLName.Local = string(models.ST_SEQ)
 			output.Par.Send(0, COL_DEEP_LIM, "OPTIONAL")
 		}
-	}
+	}*/
 	if result {
-		if word.Type() == models.ST_RULE ||
-			word.Type() == models.ST_SEQ {
+		if (*step).StepType() == models.ST_RULE ||
+			(*step).StepType() == models.ST_SEQ {
 			cursor.ApplyToParent()
 		} else {
-			fmt.Println("Add to parent", *word, "|", *element)
-			cursor.AddToParent(word, element)
+			fmt.Println("Add to parent", *step, "|", *element)
+			cursor.AddToParent(step, element)
 		}
-		output.Par.SendPair(deep, COL_GREEN, "RES", result, word.Type()) //TODO print output for failures too
+		//output.Par.SendPair(deep, COL_GREEN, "RES", result, word.Type()) //TODO print output for failures too
 	}
 	/*if word.Type() == models.ST_SEQ {
 		output.Par.SendPair(deep, COL_RED_BB, "result", cursor.buffer.StringElement.Type())

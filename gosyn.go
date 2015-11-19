@@ -6,7 +6,7 @@ import (
 	//"gosyn/models"
 	"gosyn/lexer"
 	"gosyn/output"
-	"gosyn/output/htmlreport"
+	//"gosyn/output/htmlreport"
 	"gosyn/utils"
 )
 
@@ -20,10 +20,10 @@ func main() {
 	text := lexer.HandleSource(fileText)
 	seq := lexer.ScanCycle(text)
 	output.PrintString(0, []lexer.Lexeme(*seq))
-	tree := controller.SyntaxCycle(seq, syntaxRules)
+	/*tree :=*/ controller.SyntaxCycle(seq, syntaxRules)
 	output.CloseWriter()
 	//fmt.Println(tree.ChildList[0].Type)
-	htmlreport.MakeReport(tree)
+	//htmlreport.MakeReport(tree)
 
 	classStep := controller.ClassStep(controller.NewStep("SIGN"))
 	step := controller.Step(&classStep)

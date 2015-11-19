@@ -50,7 +50,8 @@ func seqConvert(se *models.StringElement) *SeqStep {
 type Step interface {
 	StepType() models.DataType
 	String() string
-	HasChilds() (bool, *[]Step)
+	HasChilds() bool
+	Childs() *[]Step
 	RuleMatch(parent *SeqIterator) bool
 }
 
@@ -60,9 +61,10 @@ type SeqStep struct {
 }
 
 //Flyweight Data Type. Does not consume memory
-func (ss *SeqStep) StepType() models.DataType  { return models.ST_SEQ }
-func (ss *SeqStep) String() string             { return "SEQ value" }
-func (ss *SeqStep) HasChilds() (bool, *[]Step) { return true, &ss.ChildSteps }
+func (ss *SeqStep) StepType() models.DataType { return models.ST_SEQ }
+func (ss *SeqStep) String() string            { return "SEQ value" }
+func (ss *SeqStep) HasChilds() bool           { return true }
+func (ss *SeqStep) Childs() *[]Step           { return &ss.ChildSteps }
 
 //Each command in lang.xml, except 'seq', written as "type of data: typed value"
 type SimpleStep string
@@ -72,29 +74,36 @@ type RuleStep SimpleStep
 //Flyweight Data Type. Does not consume memory
 func (rs *RuleStep) StepType() models.DataType { return models.ST_RULE }
 func (rs *RuleStep) String() string            { return string(*rs) }
-func (rs *RuleStep) HasChilds() (bool, *[]Step) {
+func (rs *RuleStep) HasChilds() bool {
+	val := (GetRule(rs.String())).TopWord.Words
+	return val != nil
+}
+
+func (rs *RuleStep) Childs() *[]Step {
 	val := (GetRule(rs.String())).TopWord.Words
 	fmt.Println(val)
 	if val != nil {
-		return true, StepSliceConv(val)
+		return StepSliceConv(val)
 	} else {
-		return false, nil
+		return nil
 	}
 }
 
 type TermStep SimpleStep
 
 //Flyweight Data Type. Does not consume memory
-func (ts *TermStep) StepType() models.DataType  { return models.ST_TERM }
-func (ts *TermStep) String() string             { return string(*ts) }
-func (ts *TermStep) HasChilds() (bool, *[]Step) { return false, nil }
+func (ts *TermStep) StepType() models.DataType { return models.ST_TERM }
+func (ts *TermStep) String() string            { return string(*ts) }
+func (ts *TermStep) HasChilds() bool           { return false }
+func (ts *TermStep) Childs() *[]Step           { return nil }
 
 type ClassStep SimpleStep
 
 //Flyweight Data Type. Does not consume memory
-func (cs *ClassStep) StepType() models.DataType  { return models.ST_CLASS }
-func (cs *ClassStep) String() string             { return string(*cs) }
-func (cs *ClassStep) HasChilds() (bool, *[]Step) { return false, nil }
+func (cs *ClassStep) StepType() models.DataType { return models.ST_CLASS }
+func (cs *ClassStep) String() string            { return string(*cs) }
+func (cs *ClassStep) HasChilds() bool           { return false }
+func (cs *ClassStep) Childs() *[]Step           { return nil }
 
 func (cs *ClassStep) RuleMatch(parent *SeqIterator) bool {
 	_, element, e := GetCurrent(parent)
@@ -109,7 +118,7 @@ func (ts *TermStep) RuleMatch(parent *SeqIterator) bool {
 	if isError(e) {
 		return false
 	}
-	return ts.Value() == element.Name
+	return ts.String() == element.Name
 }
 
 func (rs *RuleStep) RuleMatch(parent *SeqIterator) bool {
@@ -117,7 +126,11 @@ func (rs *RuleStep) RuleMatch(parent *SeqIterator) bool {
 	if isError(e) {
 		return false
 	}
-	return Translate(&GetRule(dr.Value()).TopWord, cursor) //Obviously not working stub
+	rule, err := GetRuleStep(rs.String())
+	if isError(err) {
+		return false
+	}
+	return Translate(rule, cursor)
 }
 
 func (ts *SeqStep) RuleMatch(parent *SeqIterator) bool {
@@ -183,6 +196,8 @@ func (ts *SeqStep) RuleMatch(parent *SeqIterator) bool {
 		cursor.buffer.XMLName.Local = string(models.ST_SEQ)
 		output.Par.Send(0, COL_DEEP_LIM, "OPTIONAL")
 	}*/
+
+	return false
 }
 
 func NewStep(value string) SimpleStep {
@@ -194,7 +209,7 @@ func NewStep(value string) SimpleStep {
 func GetRuleStep(name string) (*Step, error) {
 	ruleStep := RuleStep(NewStep(name))
 	step := Step(&ruleStep)
-	has, _ := step.HasChilds()
+	has := step.HasChilds()
 	if has {
 		return &step, nil
 	} else {
