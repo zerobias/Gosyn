@@ -20,7 +20,7 @@ var (
 )
 
 //Init and control of parsing
-func SyntaxCycle(sequence *lexer.LexemeSequence, syntaxRules []models.Rule) models.PTreeNode {
+func SyntaxCycle(sequence *lexer.LexemeSequence, syntaxRules []models.Rule) DataFacade {
 	//source = *sequence.Transform()
 	seq = *sequence
 	rules = syntaxRules
@@ -31,15 +31,20 @@ func SyntaxCycle(sequence *lexer.LexemeSequence, syntaxRules []models.Rule) mode
 	/*for _, ptr := range source.GetChilds() {
 		fmt.Println((*ptr).Assocciated.Name)
 	}*/
-	startRule := "program"
-	output.PrintString(0, *GetRule(startRule)) //TODO catch nil
+	startRuleName := "program"
+	//output.PrintString(0, *GetRule(startRule)) //TODO catch nil
+	initRule, err := GetRuleStep(startRuleName)
+	if isError(err) {
+		fmt.Errorf(err.Error(), startRuleName)
+	}
 	output.Par = *new(output.Paragraph)
 	output.Par.Init()
 	cursor := *NewIterator(0)
-	Translate(&GetRule(startRule).TopWord, &cursor)
-	if len(cursor.buffer.ChildList) == 0 {
+	Translate(initRule, &cursor)
+	/*if len(cursor.buffer.ChildList) == 0 {
 		output.Par.Send(0, COL_RED_BB, "ZERO")
-	}
+	}*/
+
 	//output.Par.Write()
 	deep = 0
 
@@ -61,7 +66,7 @@ func isError(e error) bool {
 }
 
 //Main syntax parsing function
-func Translate(word *models.StringElement, parentCursor *SeqIterator) (result bool) {
+func Translate(step *Step, parentCursor *SeqIterator) (result bool) {
 	deepInc()
 	defer deepDec()
 
@@ -71,7 +76,8 @@ func Translate(word *models.StringElement, parentCursor *SeqIterator) (result bo
 	}
 	//fmt.Println("Element ", (*element.Value).String())
 	cursor.buffer.StringElement = *word
-	switch word.Type() {
+	result = step.RuleMatch(parentCursor)
+	switch step.StepType() {
 	case models.ST_CLASS:
 		output.Par.SendPair(deep-1, COL_BLUE_B, "CLASS", word.Value,
 			"curs.i", strconv.Itoa(cursor.int), (*element.Value).String())

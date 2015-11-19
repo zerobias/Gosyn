@@ -1,6 +1,7 @@
 package controller
 
 import (
+	"errors"
 	"fmt"
 	"gosyn/lexer"
 	"gosyn/models"
@@ -50,6 +51,7 @@ type Step interface {
 	StepType() models.DataType
 	String() string
 	HasChilds() (bool, *[]Step)
+	RuleMatch(parent *SeqIterator) bool
 }
 
 type SeqStep struct {
@@ -94,10 +96,110 @@ func (cs *ClassStep) StepType() models.DataType  { return models.ST_CLASS }
 func (cs *ClassStep) String() string             { return string(*cs) }
 func (cs *ClassStep) HasChilds() (bool, *[]Step) { return false, nil }
 
+func (cs *ClassStep) RuleMatch(parent *SeqIterator) bool {
+	_, element, e := GetCurrent(parent)
+	if isError(e) {
+		return false
+	}
+	return lexer.GetClassByName(cs.String()) == element.Cat
+}
+
+func (ts *TermStep) RuleMatch(parent *SeqIterator) bool {
+	_, element, e := GetCurrent(parent)
+	if isError(e) {
+		return false
+	}
+	return ts.Value() == element.Name
+}
+
+func (rs *RuleStep) RuleMatch(parent *SeqIterator) bool {
+	cursor, _, e := GetCurrent(parent)
+	if isError(e) {
+		return false
+	}
+	return Translate(&GetRule(dr.Value()).TopWord, cursor) //Obviously not working stub
+}
+
+func (ts *SeqStep) RuleMatch(parent *SeqIterator) bool {
+	/*_, element, e := GetCurrent(parent)
+	if isError(e) {
+		return false
+	}
+	checkChilds := func(curs *SeqIterator) bool {
+		isLast := func(n int) bool {
+			if n == len(word.Words)-1 {
+				return true
+			} else {
+				return false
+			}
+		}
+		for i, child := range word.Words {
+			childResult := Translate(&child, curs)
+			if word.Choises {
+				if childResult {
+					return true
+				} else if isLast(i) {
+					return false
+				}
+			} else {
+				if childResult {
+					if isLast(i) {
+						return true
+					}
+				} else {
+					return false
+				}
+			}
+		}
+		return false
+	}
+
+	if word.Iterative {
+		Nrep := 0
+		cycleCursor, error := InitIter(cursor)
+		cycleCursor.buffer.XMLName.Local = string(models.ST_SEQ)
+		if !isError(error) {
+			for iterSucc := true; iterSucc; {
+				iterSucc = checkChilds(cycleCursor)
+				output.Par.SendPair(deep, COL_RED, iterSucc,
+					Nrep, cursor.int, cycleCursor.int)
+				if iterSucc {
+					Nrep++
+				}
+			}
+		}
+		if Nrep > 0 {
+			cycleCursor.ApplyToParent()
+			result = true
+		} else {
+			result = false
+		}
+	} else {
+		result = checkChilds(cursor)
+	}
+	if word.Optional && !result {
+		result = true
+		cursor.buffer = models.NewTreeNode()
+		cursor.buffer.XMLName.Local = string(models.ST_SEQ)
+		output.Par.Send(0, COL_DEEP_LIM, "OPTIONAL")
+	}*/
+}
+
 func NewStep(value string) SimpleStep {
 	ss := *new(SimpleStep)
 	ss = SimpleStep(value)
 	return ss
+}
+
+func GetRuleStep(name string) (*Step, error) {
+	ruleStep := RuleStep(NewStep(name))
+	step := Step(&ruleStep)
+	has, _ := step.HasChilds()
+	if has {
+		return &step, nil
+	} else {
+		return &step, errors.New("Empty rule! Name %s")
+	}
 }
 
 func GetCurrent(parent *SeqIterator) (*SeqIterator, *lexer.Lexeme, error) {

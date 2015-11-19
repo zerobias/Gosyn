@@ -7,7 +7,7 @@ import (
 	"gosyn/output"
 	. "gosyn/output/colorman"
 	"strconv"
-	"strings"
+	//"strings"
 )
 
 var (
@@ -20,7 +20,7 @@ func deepDec() { deep = deep - 1 }
 type SeqIterator struct {
 	int
 	parent *SeqIterator
-	buffer models.PTreeNode
+	buffer DataFacade
 }
 
 func InitIter(parent *SeqIterator) (*SeqIterator, error) {
@@ -34,7 +34,7 @@ func InitIter(parent *SeqIterator) (*SeqIterator, error) {
 }
 
 func NewIterator(value int) *SeqIterator {
-	return &SeqIterator{value, nil, models.NewTreeNode()}
+	return &SeqIterator{value, nil, DataFacade{}}
 }
 
 func (i *SeqIterator) IsInRange() bool {
@@ -55,15 +55,15 @@ func (i *SeqIterator) Inc() {
 
 func (i *SeqIterator) ApplyToParent() {
 	i.parent.int = i.int
-	(*(i.parent.buffer)).AddTreeNode(i.buffer)
-	output.Par.Send(0, COL_DEEP_LIM, "APPLY", string(i.parent.buffer.Type()), strings.TrimSpace(i.parent.buffer.Value), i.buffer.Type())
+	i.parent.buffer.Add(i.buffer)
+	//output.Par.Send(0, COL_DEEP_LIM, "APPLY", string(i.parent.buffer.Type()), strings.TrimSpace(i.parent.buffer.Value), i.buffer.Type())
 }
 
 func (i *SeqIterator) AddToParent(word *models.StringElement, lex *lexer.Lexeme) {
 	i.Inc()
 	i.parent.int = i.int
-	(*(i.parent.buffer)).AddTreeValue(word, lex)
-	output.Par.Send(0, COL_DEEP_LIM, "ADD", string(i.parent.buffer.Type()), strings.TrimSpace(i.parent.buffer.Value), i.parent.int, i.buffer.Value)
+	i.parent.buffer.AddText(word, lex)
+	//output.Par.Send(0, COL_DEEP_LIM, "ADD", string(i.parent.buffer.Type()), strings.TrimSpace(i.parent.buffer.Value), i.parent.int, i.buffer.Value)
 	//i.parent.Inc()
 }
 
