@@ -11,7 +11,7 @@ type Terminal struct {
 	Name  string `xml:"name,attr"`
 	Class string `xml:"class,attr"`
 	Value string `xml:",chardata"`
-}
+} //todo move to XML processing, make private
 
 //-------------------------------------------------------------
 

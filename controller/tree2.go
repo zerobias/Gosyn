@@ -1,85 +1,120 @@
 package controller
 
 import (
+	"fmt"
 	"gosyn/lexer"
 	"gosyn/models"
 )
 
-type SchemaData interface {
-	DataType() models.DataType
-	RuleMatch(parent *SeqIterator) bool
-	Data() Container
+func StepSliceConv(ses []models.StringElement) *[]Step {
+	result := make([]Step, 0)
+	for _, val := range ses {
+		result = append(result, *StepConvert(&val))
+	}
+	return &result
 }
 
-type DataObject interface {
-	SchemaData
-	Value() string
+func StepConvert(se *models.StringElement) *Step {
+	val := NewStep(se.Value)
+	switch se.Type() {
+	case models.ST_SEQ:
+		result := *seqConvert(se)
+		ret := Step(&result)
+		return &ret
+	case models.ST_CLASS:
+		result := ClassStep(val)
+		ret := Step(&result)
+		return &ret
+	case models.ST_RULE:
+		result := RuleStep(val)
+		ret := Step(&result)
+		return &ret
+	case models.ST_TERM:
+		result := TermStep(val)
+		ret := Step(&result)
+		return &ret
+	}
+
+	return nil
 }
 
-type DataSet interface {
-	//Optioner
-	SchemaData
-	Value() []Container
+func seqConvert(se *models.StringElement) *SeqStep {
+	step := SeqStep{make([]Step, 0, len(se.Words)), NewOptions(se.Optional, se.Choises, se.Iterative)}
+	for _, childSE := range se.Words {
+		step.ChildSteps = append(step.ChildSteps, *StepConvert(&childSE))
+	}
+	return &step
 }
 
-type Container interface {
-	IsObject() bool
-	Object() DataObject
-	Array() DataSet
+type Step interface {
+	StepType() models.DataType
+	String() string
+	HasChilds() (bool, *[]Step)
 }
 
-type DataContainer struct {
-	object   DataObject
-	set      DataSet
-	dataType models.DataType
-}
-
-/*func (dc *DataContainer) IsObject() bool {
-
-}*/
-
-type value struct {
-	value string
-}
-
-type (
-	DClass value
-	DTerm  value
-	DRule  value
-)
-
-/*func (v *value) Value() string {
-	return v.value
-}*/
-
-func (dc *DClass) Value() string {
-	return dc.value
-}
-
-func (dt *DTerm) Value() string {
-	return dt.value
-}
-
-func (dr *DRule) Value() string {
-	return dr.value
+type SeqStep struct {
+	ChildSteps []Step
+	options    Options
 }
 
 //Flyweight Data Type. Does not consume memory
-func (dc DClass) DataType() models.DataType {
-	return models.ST_CLASS
-}
+func (ss *SeqStep) StepType() models.DataType  { return models.ST_SEQ }
+func (ss *SeqStep) String() string             { return "SEQ value" }
+func (ss *SeqStep) HasChilds() (bool, *[]Step) { return true, &ss.ChildSteps }
+
+//Each command in lang.xml, except 'seq', written as "type of data: typed value"
+type SimpleStep string
+
+type RuleStep SimpleStep
 
 //Flyweight Data Type. Does not consume memory
-func (dt DTerm) DataType() models.DataType {
-	return models.ST_TERM
-}
+func (rs *RuleStep) StepType() models.DataType { return models.ST_RULE }
+func (rs *RuleStep) String() string            { return string(*rs) }
+func (rs *RuleStep) HasChilds() (bool, *[]Step) {
+	val := (GetRule(rs.String())).TopWord.Words
+	fmt.Println(val)
+	if val != nil {
+		return true, StepSliceConv(val)
+	} else {
+		return false, nil
+	}
+} //TODO!!! Replace getter to Step analog of GetRule
+
+type TermStep SimpleStep
 
 //Flyweight Data Type. Does not consume memory
-func (dr DRule) DataType() models.DataType {
-	return models.ST_RULE
+func (ts *TermStep) StepType() models.DataType  { return models.ST_TERM }
+func (ts *TermStep) String() string             { return string(*ts) }
+func (ts *TermStep) HasChilds() (bool, *[]Step) { return false, nil }
+
+type ClassStep SimpleStep
+
+//Flyweight Data Type. Does not consume memory
+func (cs *ClassStep) StepType() models.DataType  { return models.ST_CLASS }
+func (cs *ClassStep) String() string             { return string(*cs) }
+func (cs *ClassStep) HasChilds() (bool, *[]Step) { return false, nil }
+
+func NewStep(value string) SimpleStep {
+	ss := *new(SimpleStep)
+	ss = SimpleStep(value)
+	return ss
 }
 
-func (dc *DClass) RuleMatch(parent *SeqIterator) bool {
+func NewFacade(step *Step, lexeme *lexer.Lexeme, childs *[]DataFacade) *DataFacade {
+	return &DataFacade{step, lexeme, childs}
+}
+
+type DataFacade struct {
+	step   *Step
+	lexeme *lexer.Lexeme
+	childs *[]DataFacade
+}
+
+func (df *DataFacade) StepValue() string          { return (*df.step).String() }
+func (df *DataFacade) StepType() models.DataType  { return (*df.step).StepType() }
+func (df *DataFacade) HasChilds() (bool, *[]Step) { return (*df.step).HasChilds() }
+
+/*func (dc *DClass) RuleMatch(parent *SeqIterator) bool {
 	_, element, e := GetCurrent(parent)
 	if isError(e) {
 		return false
@@ -101,7 +136,7 @@ func (dr *DRule) RuleMatch(parent *SeqIterator) bool {
 		return false
 	}
 	return Translate(&GetRule(dr.Value()).TopWord, cursor)
-}
+}*/
 
 func GetCurrent(parent *SeqIterator) (*SeqIterator, *lexer.Lexeme, error) {
 	i, e := InitIter(parent)
@@ -118,6 +153,14 @@ func GetCurrent(parent *SeqIterator) (*SeqIterator, *lexer.Lexeme, error) {
 //---------------------
 
 type OptionType string
+
+func NewOptions(o, c, i bool) Options {
+	opt := make(map[OptionType]bool, 3)
+	opt[Optional] = o
+	opt[Choises] = c
+	opt[Iterative] = i
+	return Options(opt)
+}
 
 func (ot OptionType) String() string { return string(ot) }
 

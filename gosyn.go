@@ -25,4 +25,15 @@ func main() {
 	//fmt.Println(tree.ChildList[0].Type)
 	htmlreport.MakeReport(tree)
 
+	classStep := controller.ClassStep(controller.NewStep("SIGN"))
+	step := controller.Step(&classStep)
+	facade := controller.NewFacade(&step, nil, nil)
+	fmt.Println("Test ", lexer.GetClassByName(facade.StepValue()))
+
+	ruleStep := controller.RuleStep(controller.NewStep("program"))
+	step = controller.Step(&ruleStep)
+	facade = controller.NewFacade(&step, nil, nil)
+	fmt.Println(facade.StepType(), facade.StepValue())
+	b, ch := facade.HasChilds()
+	fmt.Println("Test ", b, *ch)
 }
