@@ -122,33 +122,27 @@ func (ts *TermStep) RuleMatch(parent *SeqIterator) bool {
 }
 
 func (rs *RuleStep) RuleMatch(parent *SeqIterator) bool {
-	cursor, _, e := GetCurrent(parent)
+	/*cursor*/ _, _, e := GetCurrent(parent)
 	if isError(e) {
 		return false
 	}
-	rule, err := GetRuleStep(rs.String())
+	/*rule*/ _, err := GetRuleStep(rs.String())
 	if isError(err) {
 		return false
 	}
-	return Translate(rule, cursor)
+	return false //Translate(rule, cursor)
 }
 
 func (ts *SeqStep) RuleMatch(parent *SeqIterator) bool {
-	/*_, element, e := GetCurrent(parent)
+	cursor, element, e := GetCurrent(parent)
 	if isError(e) {
 		return false
 	}
 	checkChilds := func(curs *SeqIterator) bool {
-		isLast := func(n int) bool {
-			if n == len(word.Words)-1 {
-				return true
-			} else {
-				return false
-			}
-		}
-		for i, child := range word.Words {
+		isLast := func(n int) bool { return n == len(*(ts.Childs()))-1 }
+		for i, child := range *(ts.Childs()) {
 			childResult := Translate(&child, curs)
-			if word.Choises {
+			if ts.options[Choises] {
 				if childResult {
 					return true
 				} else if isLast(i) {
@@ -167,15 +161,13 @@ func (ts *SeqStep) RuleMatch(parent *SeqIterator) bool {
 		return false
 	}
 
-	if word.Iterative {
+	if ts.options[Iterative] {
 		Nrep := 0
 		cycleCursor, error := InitIter(cursor)
-		cycleCursor.buffer.XMLName.Local = string(models.ST_SEQ)
+		cycleCursor.buffer = NewFacadeList(*ts, nil) //string(models.ST_SEQ)
 		if !isError(error) {
 			for iterSucc := true; iterSucc; {
 				iterSucc = checkChilds(cycleCursor)
-				output.Par.SendPair(deep, COL_RED, iterSucc,
-					Nrep, cursor.int, cycleCursor.int)
 				if iterSucc {
 					Nrep++
 				}
@@ -194,8 +186,7 @@ func (ts *SeqStep) RuleMatch(parent *SeqIterator) bool {
 		result = true
 		cursor.buffer = models.NewTreeNode()
 		cursor.buffer.XMLName.Local = string(models.ST_SEQ)
-		output.Par.Send(0, COL_DEEP_LIM, "OPTIONAL")
-	}*/
+	}
 
 	return false
 }
