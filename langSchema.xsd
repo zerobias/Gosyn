@@ -1,75 +1,94 @@
-<?xml version="1.0" encoding="utf-8" ?>
-<!--Created with Liquid XML Studio Developer Edition 9.0.11.3078 (http://www.liquid-technologies.com)-->
-<xs:schema xmlns:tns="gosyn" elementFormDefault="qualified" xmlns:xs="http://www.w3.org/2001/XMLSchema">
-    <xs:simpleType name="TermCategory" final="#all">
+<?xml version="1.0" encoding="UTF-8"?>
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema"
+    xmlns:vc="http://www.w3.org/2007/XMLSchema-versioning" elementFormDefault="qualified"
+    xmlns:t="syntax scheme" vc:minVersion="1.1" xpathDefaultNamespace="##local">
+    <xs:simpleType name="TermCategory">
         <xs:restriction base="xs:token">
-            <xs:enumeration value="KEYWORD" />
-            <xs:enumeration value="SIGN" />
-            <xs:enumeration value="DELIMETER" />
-            <xs:enumeration value="WORD" />
-            <xs:enumeration value="NUMBER" />
+            <xs:enumeration value="KEYWORD"/>
+            <xs:enumeration value="SIGN"/>
+            <xs:enumeration value="DELIMETER"/>
+            <xs:enumeration value="TEXT"/>
+            <xs:enumeration value="NUMBER"/>
         </xs:restriction>
     </xs:simpleType>
     <xs:complexType name="Term">
-        <xs:sequence>
-            <xs:element name="name" type="xs:token" minOccurs="1" maxOccurs="1">
-                <xs:key name="termType">
-                    <xs:selector xpath="termType" />
-                    <xs:field xpath="tns:termType" />
-                </xs:key>
-            </xs:element>
-            <xs:element name="category" type="TermCategory" minOccurs="1" maxOccurs="1" />
-            <xs:element name="value" minOccurs="1" maxOccurs="1">
-                <xs:simpleType>
-                    <xs:restriction base="xs:string">
-                        <xs:minLength value="1" />
-                    </xs:restriction>
-                </xs:simpleType>
-            </xs:element>
-        </xs:sequence>
+        <xs:simpleContent>
+            <xs:extension base="xs:token">
+                <xs:attribute name="name" type="xs:token"/>
+                <xs:attribute default="TEXT" name="class" type="TermCategory"/>
+            </xs:extension>
+        </xs:simpleContent>
     </xs:complexType>
-    <xs:element name="termTypes">
-        <xs:complexType>
-            <xs:choice>
-                <xs:element name="term" type="Term" minOccurs="1" maxOccurs="unbounded" />
-            </xs:choice>
-        </xs:complexType>
-    </xs:element>
-    <xs:attributeGroup name="modifiers">
-        <xs:attribute name="iterative" type="xs:boolean" default="false" use="optional" />
-        <xs:attribute name="choices" type="xs:boolean" default="false" use="optional" />
+    <xs:attributeGroup name="modifers">
+        <xs:attribute default="false" name="iterative" type="xs:boolean" use="optional"/>
+        <xs:attribute default="false" name="choices" type="xs:boolean" use="optional"/>
+        <xs:attribute default="true" name="optional" type="xs:boolean"/>
     </xs:attributeGroup>
-    <xs:complexType name="GrammarRule">
-        <xs:sequence>
-            <xs:choice>
-                <xs:element name="sequence" type="GrammarRule" />
-                <xs:element name="value" type="Term" />
-                <xs:element name="innerRule">
+    <xs:element name="ROOT">
+        <xs:complexType>
+            <xs:sequence>
+                <xs:element name="TERMINALS">
                     <xs:complexType>
-                        <xs:complexContent>
-                            <xs:extension base="GrammarRule">
-                                <xs:attribute name="innerName" type="xs:Name" />
-                            </xs:extension>
-                        </xs:complexContent>
+                        <xs:choice>
+                            <xs:element maxOccurs="unbounded" name="TERM" type="Term"/>
+                        </xs:choice>
                     </xs:complexType>
                 </xs:element>
+                <xs:element name="RULES" id="RULES">
+                    <xs:complexType>
+                        <xs:choice>
+                            <xs:element maxOccurs="unbounded" name="RULE" type="Rule"/>
+                        </xs:choice>
+                    </xs:complexType>
+                    <xs:unique name="RULE_TYPE_UK">
+                        <xs:selector xpath="RULE"/>
+                        <xs:field xpath="@name"/>
+                    </xs:unique>
+                    <xs:keyref name="RULE_TYPE_FK" refer="RULE_TYPE_UK">
+                        <xs:selector xpath="RULE/seq/rule | RULE/seq/seq/rule"/>
+                        <xs:field xpath="."/>
+                    </xs:keyref>
+                </xs:element>
+            </xs:sequence>
+
+        </xs:complexType>
+        <xs:unique name="TERM_TYPE_UK">
+            <xs:selector xpath="TERMINALS/TERM"/>
+            <xs:field xpath="@name"/>
+        </xs:unique>
+        <xs:keyref name="TERM_TYPE_FK" refer="TERM_TYPE_UK">
+            <xs:selector xpath="RULES/RULE/seq/term"/>
+            <xs:field xpath="."/>
+        </xs:keyref>
+        <xs:keyref name="new" refer="RULE_TYPE_UK">
+            <xs:selector xpath="RULES/RULE/seq/seq/rule"/>
+            <xs:field xpath="."/>
+        </xs:keyref>
+
+    </xs:element>
+    <xs:complexType name="Word">
+        <xs:sequence>
+            <xs:choice maxOccurs="unbounded">
+                <xs:element name="class" minOccurs="0" type="TermCategory"> </xs:element>
+                <xs:element minOccurs="0" name="seq" type="Word"/>
+                <xs:element minOccurs="0" name="rule" type="xs:token" id="innerRule"/>
+                <xs:element minOccurs="0" name="term" type="xs:token"/>
             </xs:choice>
         </xs:sequence>
-        <xs:attributeGroup ref="modifiers" />
+        <xs:attributeGroup ref="modifers"/>
+        <!--if(every $y in id(@RULES)/child::* satisfies (
+        
+        true()
+        )) then true() else false()
+        exisits(.//ROOT/termTypes)-->
+        <!--<xs:assert test="(every $y in .//descendant::text() satisfies (
+            if (count($y/child::*)=0) then false() else true()
+            ))"/>-->
     </xs:complexType>
-    <xs:element name="Grammar">
-        <xs:complexType>
-            <xs:choice minOccurs="1" maxOccurs="unbounded">
-                <xs:element name="rule">
-                    <xs:complexType>
-                        <xs:complexContent>
-                            <xs:extension base="GrammarRule">
-                                <xs:attribute name="name" type="xs:Name" />
-                            </xs:extension>
-                        </xs:complexContent>
-                    </xs:complexType>
-                </xs:element>
-            </xs:choice>
-        </xs:complexType>
-    </xs:element>
+    <xs:complexType id="innerRuleID" name="Rule">
+        <xs:sequence>
+            <xs:element maxOccurs="unbounded" name="seq" type="Word"/>
+        </xs:sequence>
+        <xs:attribute name="name" type="xs:token" use="required"/>
+    </xs:complexType>
 </xs:schema>
