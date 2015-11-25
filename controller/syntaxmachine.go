@@ -5,53 +5,30 @@ import (
 	"fmt"
 	"gosyn/lexer"
 	"gosyn/models"
-	"gosyn/output"
-	. "gosyn/output/colorman"
+	/*"gosyn/output"
+	. "gosyn/output/colorman"*/
 	/*"log"
 	"os"
 	"os/exec"*/
 	//"strconv"
 )
 
-var (
+var ( //TODO remove globals
 	rules []models.Rule
-	//source models.ParsedSentence
-	seq lexer.LexemeSequence
+	seq   lexer.LexemeSequence
 )
 
 //Init and control of parsing
 func SyntaxCycle(sequence *lexer.LexemeSequence, syntaxRules []models.Rule) DataFacade {
-	//source = *sequence.Transform()
 	seq = *sequence
 	rules = syntaxRules
-	/*output.PrintString(0, "\nSyntaxCycle SEQ")
-	for _, lex := range []lexer.Lexeme(*sequence) {
-		output.PrintString(0, lex.Name, (*(lex.Value)).String())
-	}*/
-	/*for _, ptr := range source.GetChilds() {
-		fmt.Println((*ptr).Assocciated.Name)
-	}*/
 	startRuleName := "program"
-	//output.PrintString(0, *GetRule(startRule)) //TODO catch nil
 	initRule, err := GetRuleStep(startRuleName)
 	if isError(err) {
 		fmt.Errorf(err.Error(), startRuleName)
 	}
-	output.Par = *new(output.Paragraph)
-	output.Par.Init()
 	cursor := *NewIterator(0)
 	Translate(initRule, &cursor)
-	/*if len(cursor.buffer.ChildList) == 0 {
-		output.Par.Send(0, COL_RED_BB, "ZERO")
-	}*/
-
-	//output.Par.Write()
-	deep = 0
-
-	output.Par = *new(output.Paragraph)
-	output.Par.Init()
-	//PrintTree(*cursor.buffer)
-	output.Par.Write()
 
 	return cursor.buffer
 }
@@ -165,39 +142,4 @@ func GetRule(name string) *models.Rule {
 		}
 	}
 	return nil
-}
-
-func PrintTree(tree models.TreeNode) { //TODO make private or move to output (better)
-	deepInc()
-	defer deepDec()
-	var valText string
-	for _, val := range tree.ChildList {
-		if val.Type == models.TREE_NODE {
-
-			if val.AsNode().Type() == models.ST_SEQ {
-				valText = ""
-			} else {
-				valText = val.AsNode().Value
-			}
-			output.Par.Send(deep, RESET+COL_RED, val.AsNode().Type(),
-				valText)
-			if deep < 12 {
-				PrintTree(*val.AsNode())
-			} else {
-				output.Par.Send(deep, RESET,
-					AppendColor("deep limit", COL_DEEP_LIM))
-				break
-			}
-		} else {
-			if val.AsValue() != nil {
-				output.Par.Send(deep, RESET,
-					val.AsValue().Type(),
-					AppendColor(val.AsValue().Value.Name, COL_BLUE_U),
-					val.AsValue().Value.Value)
-			} else {
-				output.Par.Send(deep, COL_RED_BB, "NIL")
-			}
-			// tree.GetTreeValue(*val).Value.Value)
-		}
-	}
 }
