@@ -61,10 +61,10 @@ type SeqStep struct {
 }
 
 //Flyweight Data Type. Does not consume memory
-func (ss *SeqStep) StepType() models.DataType { return models.ST_SEQ }
-func (ss *SeqStep) String() string            { return "SEQ value" }
-func (ss *SeqStep) HasChilds() bool           { return true }
-func (ss *SeqStep) Childs() *[]Step           { return &ss.ChildSteps }
+func (ss SeqStep) StepType() models.DataType { return models.ST_SEQ }
+func (ss SeqStep) String() string            { return "SEQ value" }
+func (ss SeqStep) HasChilds() bool           { return true }
+func (ss SeqStep) Childs() *[]Step           { return &ss.ChildSteps }
 
 //Each command in lang.xml, except 'seq', written as "type of data: typed value"
 type SimpleStep string
@@ -133,8 +133,9 @@ func (rs *RuleStep) RuleMatch(parent *SeqIterator) bool {
 	return false //Translate(rule, cursor)
 }
 
-func (ts *SeqStep) RuleMatch(parent *SeqIterator) bool {
-	cursor, element, e := GetCurrent(parent)
+func (ts SeqStep) RuleMatch(parent *SeqIterator) bool {
+	var result bool
+	cursor, _ /*element*/, e := GetCurrent(parent)
 	if isError(e) {
 		return false
 	}
@@ -164,7 +165,7 @@ func (ts *SeqStep) RuleMatch(parent *SeqIterator) bool {
 	if ts.options[Iterative] {
 		Nrep := 0
 		cycleCursor, error := InitIter(cursor)
-		cycleCursor.buffer = NewFacadeList(*ts, nil) //string(models.ST_SEQ)
+		cycleCursor.buffer = *NewFacadeStep(ts) //string(models.ST_SEQ)
 		if !isError(error) {
 			for iterSucc := true; iterSucc; {
 				iterSucc = checkChilds(cycleCursor)
@@ -182,10 +183,9 @@ func (ts *SeqStep) RuleMatch(parent *SeqIterator) bool {
 	} else {
 		result = checkChilds(cursor)
 	}
-	if word.Optional && !result {
+	if ts.options[Optional] && !result {
 		result = true
-		cursor.buffer = models.NewTreeNode()
-		cursor.buffer.XMLName.Local = string(models.ST_SEQ)
+		cursor.buffer = *NewFacadeStep(SeqStep{})
 	}
 
 	return false

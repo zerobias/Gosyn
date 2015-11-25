@@ -146,7 +146,6 @@ func Translate(step *Step, parentCursor *SeqIterator) (result bool) {
 			fmt.Println("Add to parent", *step, "|", *element)
 			cursor.AddToParent(step, element)
 		}
-		//output.Par.SendPair(deep, COL_GREEN, "RES", result, word.Type()) //TODO print output for failures too
 	}
 	/*if word.Type() == models.ST_SEQ {
 		output.Par.SendPair(deep, COL_RED_BB, "result", cursor.buffer.StringElement.Type())
