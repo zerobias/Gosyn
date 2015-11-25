@@ -1,0 +1,75 @@
+<!doctype html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="chrome=1">
+    <title>Gosyn by zerobias</title>
+
+    <link rel="stylesheet" href="stylesheets/styles.css">
+    <link rel="stylesheet" href="stylesheets/github-light.css">
+    <meta name="viewport" content="width=device-width">
+    <!--[if lt IE 9]>
+    <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+  </head>
+  <body>
+    <div class="wrapper">
+      <header>
+        <h1>Gosyn</h1>
+        <p>Golang Syntax and lexical parser of freeform programming language. Description syntax through XML, validation through XSD Schema</p>
+
+        <p class="view"><a href="https://github.com/zerobias/gosyn">View the Project on GitHub <small>zerobias/gosyn</small></a></p>
+
+
+        <ul>
+          <li><a href="https://github.com/zerobias/gosyn/zipball/master">Download <strong>ZIP File</strong></a></li>
+          <li><a href="https://github.com/zerobias/gosyn/tarball/master">Download <strong>TAR Ball</strong></a></li>
+          <li><a href="https://github.com/zerobias/gosyn">View On <strong>GitHub</strong></a></li>
+        </ul>
+      </header>
+      <section>
+        <h1>
+<a id="gosyn" class="anchor" href="#gosyn" aria-hidden="true"><span class="octicon octicon-link"></span></a>Gosyn</h1>
+
+<p>Syntax and lexical parser of freeform programming language. Description syntax through XML, validation through XSD Schema</p>
+
+<p>Parse text file to the syntax tree.</p>
+
+<p>Contains the following levels of language representation:</p>
+
+<ol>
+<li>
+<p>Symbol level</p>
+
+<p>Transform the text file into a sequence of characters</p>
+</li>
+<li>
+<p>Lexical level</p>
+
+<p>Transforms sequence of characters into tokens and lexemes - recognized words of existing grammar categories</p>
+</li>
+<li>
+<p>Syntax level</p>
+
+<p>Checks set of lexemes for compliance with existing rules and creates a syntax tree of recognized rules, 
+structures and tokens</p>
+</li>
+</ol>
+
+<p>Terms and rules are defined in the XML file lang.xml with a special syntax. The XSD schema file langSchema.xsd allows to check for correctness grammar file</p>
+
+<p><strong>Proof of concept, requires massive refactoring</strong></p>
+
+<p><a href="https://travis-ci.org/zerobias/gosyn"><img src="https://travis-ci.org/zerobias/gosyn.svg?branch=master" alt="Build Status"></a></p>
+
+<p>Auto generated Godoc documentation is available here: <a href="https://godoc.org/github.com/zerobias/gosyn">godoc.org/github.com/zerobias/gosyn</a></p>
+      </section>
+      <footer>
+        <p>This project is maintained by <a href="https://github.com/zerobias">zerobias</a></p>
+        <p><small>Hosted on GitHub Pages &mdash; Theme by <a href="https://github.com/orderedlist">orderedlist</a></small></p>
+      </footer>
+    </div>
+    <script src="javascripts/scale.fix.js"></script>
+    
+  </body>
+</html>
