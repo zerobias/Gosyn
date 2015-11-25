@@ -7,16 +7,42 @@ import (
 	"gosyn/models"
 )
 
+//Storage type for elements of rules descriptions
 type Step interface {
+	//Flyweight Data Type. Does not consume memory
 	StepType() models.DataType
+	//Stringer interface of type
 	String() string
 	HasChilds() bool
+	//Get child steps
 	Childs() *[]Step
+	//Execute rule with current step
 	RuleMatch(parent *SeqIterator) bool
+	ParentGet() *Step
+}
+type NullStep struct {
+	parent *Step
 }
 
-//Each command in lang.xml, except 'seq', written as "type of data: typed value"
-type SimpleStep string
+func (ns NullStep) ParentGet() *Step { return ns.parent }
+
+//func (ns NullStep) Siblings() *[]Step { return (*ns.parent).Childs() }
+
+/*func (ns NullStep) IsLast() bool {
+	return (*ns.siblings)[len(ns.siblings()) - 1] ==
+}*/
+
+type Iter interface {
+	IsLast() bool
+	ParentSet(parent Step)
+	ParentGet(parent Step)
+}
+
+//Each command in lang.xml, except 'seq', written as "type of data: typed string"
+type SimpleStep struct {
+	string
+	NullStep
+}
 
 type TermStep SimpleStep
 type ClassStep SimpleStep
@@ -24,18 +50,17 @@ type RuleStep SimpleStep
 type SeqStep struct {
 	ChildSteps []Step
 	options    Options
+	NullStep
 }
 
-//Flyweight Data Type. Does not consume memory
 func (ts TermStep) StepType() models.DataType  { return models.ST_TERM }
 func (cs ClassStep) StepType() models.DataType { return models.ST_CLASS }
 func (rs RuleStep) StepType() models.DataType  { return models.ST_RULE }
 func (ss SeqStep) StepType() models.DataType   { return models.ST_SEQ }
 
-//Stringer interface of type
-func (ts TermStep) String() string  { return string(ts) }
-func (cs ClassStep) String() string { return string(cs) }
-func (rs RuleStep) String() string  { return string(rs) }
+func (ts TermStep) String() string  { return ts.string }
+func (cs ClassStep) String() string { return cs.string }
+func (rs RuleStep) String() string  { return rs.string }
 func (ss SeqStep) String() string   { return "SEQ value" }
 
 func (ts TermStep) HasChilds() bool  { return false }
@@ -46,7 +71,6 @@ func (rs RuleStep) HasChilds() bool {
 }
 func (ss SeqStep) HasChilds() bool { return true }
 
-//Get child steps
 func (ts TermStep) Childs() *[]Step  { return nil }
 func (cs ClassStep) Childs() *[]Step { return nil }
 func (rs RuleStep) Childs() *[]Step {
@@ -60,10 +84,18 @@ func (rs RuleStep) Childs() *[]Step {
 }
 func (ss SeqStep) Childs() *[]Step { return &ss.ChildSteps }
 
+func IsLast(step *Step) bool {
+	p := *(*(*step).ParentGet()).Childs()
+	return p[len(p)-1] == *step
+}
+
+func (ts TermStep) ParentGet() *Step  { return ts.NullStep.ParentGet() }
+func (cs ClassStep) ParentGet() *Step { return cs.NullStep.ParentGet() }
+func (rs RuleStep) ParentGet() *Step  { return rs.NullStep.ParentGet() }
+func (ss SeqStep) ParentGet() *Step   { return ss.NullStep.ParentGet() }
+
 func NewStep(value string) SimpleStep {
-	ss := *new(SimpleStep)
-	ss = SimpleStep(value)
-	return ss
+	return SimpleStep{value, NullStep{}}
 }
 
 func GetRuleStep(name string) (*Step, error) {
@@ -116,35 +148,9 @@ func StepConvert(se *models.StringElement) Step {
 }
 
 func seqConvert(se *models.StringElement) SeqStep {
-	step := SeqStep{make([]Step, 0, len(se.Words)), NewOptions(se.Optional, se.Choises, se.Iterative)}
+	step := SeqStep{make([]Step, 0, len(se.Words)), NewOptions(se.Optional, se.Choises, se.Iterative), NullStep{}}
 	for _, childSE := range se.Words {
 		step.ChildSteps = append(step.ChildSteps, StepConvert(&childSE))
 	}
 	return step
-}
-
-//---------------------
-
-type OptionType string
-
-func NewOptions(o, c, i bool) Options {
-	opt := make(map[OptionType]bool, 3)
-	opt[Optional] = o
-	opt[Choises] = c
-	opt[Iterative] = i
-	return Options(opt)
-}
-
-func (ot OptionType) String() string { return string(ot) }
-
-const (
-	Optional  OptionType = "optional"
-	Choises              = "choises"
-	Iterative            = "iterative"
-)
-
-type Options map[OptionType]bool
-type Optioner interface {
-	HasNonDefaultOpt() bool
-	Options() Options
 }

@@ -1,7 +1,7 @@
 package htmlreport
 
 import (
-	//"gosyn/controller"
+	"gosyn/controller"
 	"gosyn/models"
 	//"bufio"
 	// "io"
@@ -17,59 +17,53 @@ import (
 func SetFilename(filename string) {
 	filenameReport = filename
 }
-func MakeReport(tree *models.TreeNode) {
-	newTree := models.NewTreeNode()
-	treeRebuilding(tree, newTree)
+func MakeReport(tree *controller.DataFacade) {
+	newTree := controller.DataFacade{}
+	treeRebuilding(tree, &newTree)
 	fmt.Println("-----Rebuilded:")
 	fmt.Println(*tree)
-	storeResult(htmlHead + makeList(newTree, true) + htmlEnd)
-	fmt.Println(*newTree)
+	storeResult(htmlHead + makeList(&newTree, true) + htmlEnd)
+	fmt.Println(&newTree)
 }
 
-func rebuildTree(node models.TreeLink, newTree models.PTreeNode) {
-	switch node.Type {
-	case models.TREE_NODE:
-		treeRebuilding(node.AsNode(), newTree)
-	case models.TREE_VALUE:
-		(*newTree).AddChild(node)
-	default:
-		fmt.Println("[rebuildTree] UNEXCEPTION TreeElementType! ID ", node.ID)
+func rebuildTree(node *controller.DataFacade, newTree *controller.DataFacade) {
+	if (*node).HasChilds() {
+		treeRebuilding(node, newTree)
+	} else {
+		(*newTree).Add(*node)
 	}
 }
 
-func treeRebuilding(tree models.PTreeNode, newTree models.PTreeNode) {
-	rebuildChilds := func(parent models.PTreeNode) {
-		for _, child := range tree.ChildList {
-			rebuildTree(*child, parent)
-		}
+func treeRebuilding(tree *controller.DataFacade, newTree *controller.DataFacade) {
+	rebuildChilds := func(parent *controller.DataFacade) {
+		/*for _, child := range *tree.Childs() {
+			rebuildTree(child, parent)
+		}*/
 	}
 
-	switch (*tree).Type() {
+	switch (*tree).StepType() {
 	case models.ST_SEQ:
 		rebuildChilds(newTree)
 	default:
-		result := models.NewTreeNode()
-		(*result).StringElement = tree.StringElement
+		result := controller.NewFacadeText(tree.GetStep(), tree.GetLex())
 		rebuildChilds(result)
-		(*newTree).AddTreeNode(result)
+		(*newTree).Add(*result)
 	}
 	return
 }
 
-func makeList(tree models.PTreeNode, isFirst bool) (result string) {
-	var e *models.TreeLink
-	for _, e = range tree.ChildList {
+func makeList(tree *controller.DataFacade, isFirst bool) (result string) {
+	for _, e := range *tree.Childs() {
 		var resLi string
-		if e.Type == models.TREE_VALUE {
-			resLi = EscapedLink((*(e.AsValue().Value.Value)).String())
+		if !e.HasChilds() {
+			resLi = EscapedLink(e.String())
 		} else {
-			node := e.AsNode()
-			resLi = string(node.Type()) + " " + strings.TrimSpace(node.Value)
+			resLi = string(e.StepType()) + " " + strings.TrimSpace(e.String())
 			if len(strings.TrimSpace(resLi)) == 0 {
 				resLi = "EMPTY"
 			}
 			resLi = EscapedLink(resLi)
-			resLi += makeList(node, false)
+			//resLi += makeList(e, false)
 		}
 		result += TAG_ELEM.Wrap(resLi)
 	}

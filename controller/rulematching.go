@@ -6,7 +6,6 @@ import (
 	//"gosyn/models"
 )
 
-//Apply current rule to step
 func (ts TermStep) RuleMatch(parent *SeqIterator) bool {
 	_, element, e := GetCurrent(parent)
 	if isError(e) {
@@ -42,18 +41,17 @@ func (ts SeqStep) RuleMatch(parent *SeqIterator) bool {
 		return false
 	}
 	checkChilds := func(curs *SeqIterator) bool {
-		isLast := func(n int) bool { return n == len(*(ts.Childs()))-1 }
-		for i, child := range *(ts.Childs()) {
+		for _, child := range *(ts.Childs()) {
 			childResult := Translate(&child, curs)
 			if ts.options[Choises] {
 				if childResult {
 					return true
-				} else if isLast(i) {
+				} else if IsLast(&child) {
 					return false
 				}
 			} else {
 				if childResult {
-					if isLast(i) {
+					if IsLast(&child) {
 						return true
 					}
 				} else {

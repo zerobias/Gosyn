@@ -27,10 +27,11 @@ type DataFacade struct {
 	childs *[]DataFacade
 }
 
-func (df *DataFacade) StepValue() string          { return (*df.step).String() }
-func (df *DataFacade) StepType() models.DataType  { return (*df.step).StepType() }
-func (df *DataFacade) HasChilds() (bool, *[]Step) { return (*df.step).HasChilds(), (*df.step).Childs() }
-
+func (df *DataFacade) StepValue() string         { return (*df.step).String() }
+func (df *DataFacade) StepType() models.DataType { return (*df.step).StepType() }
+func (df *DataFacade) HasChilds() bool           { return (*df.step).HasChilds() }
+func (df *DataFacade) Childs() *[]Step           { return (*df.step).Childs() }
+func (df *DataFacade) Child() *lexer.Lexeme      { return df.lexeme }
 func (df *DataFacade) Add(child DataFacade) {
 	*(df.childs) = append(*(df.childs), child)
 }
@@ -38,3 +39,7 @@ func (df *DataFacade) Add(child DataFacade) {
 func (df *DataFacade) AddText(step *Step, lex *lexer.Lexeme) {
 	df.Add(*NewFacadeText(step, lex))
 }
+
+func (df *DataFacade) GetStep() *Step { return df.step }
+
+func (df *DataFacade) GetLex() *lexer.Lexeme { return df.lexeme }
