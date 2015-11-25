@@ -4,3 +4,14 @@ go:
   - 1.5
   
 sudo: false
+
+install:
+- go get github.com/zerobias/gosyn/controller
+- go get github.com/zerobias/gosyn/lexer
+- go get github.com/zerobias/gosyn/output
+- go get github.com/zerobias/gosyn/output/htmlreport
+- go get github.com/zerobias/gosyn/utils
+- go get github.com/zerobias/gosyn/models
+- go get github.com/zerobias/gosyn/output/colorman
+- go get github.com/zerobias/gosyn/testingtools
+- go get github.com/zerobias/gosyn/debug
