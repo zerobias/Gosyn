@@ -3,8 +3,5 @@ language: go
 go:
   - tip
 
-script:
-  - go get -t ./...
-  - go build ./controller/
-  - go build ./lexer/
-  - go install
+go_import_path: github.com/zerobias/gosyn
+
