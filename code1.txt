@@ -1,0 +1,20 @@
+Program KursProg;
+var
+  S,A,  B:real;
+  D,I:integer;
+Begin
+  1:Dss:=20;
+  2:readln(A);
+  S:=A*3+28/S-I;
+  For I:=0 to D do
+  Begin
+    S:=3.14; 
+    B:=3; 
+    writeln(S);
+  End;
+  if D>=S
+  Then
+    Goto 1
+  else
+    goto 2;
+End
