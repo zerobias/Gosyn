@@ -1,10 +1,10 @@
 package controller
 
 import (
-	"gosyn/lexer"
+	"github.com/zerobias/gosyn/lexer"
 	//"gosyn/models"
-	. "gosyn/testingtools"
-	"gosyn/utils"
+	. "github.com/zerobias/gosyn/testingtools"
+	"github.com/zerobias/gosyn/utils"
 	"testing"
 )
 

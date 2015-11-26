@@ -3,8 +3,8 @@ package models
 import (
 	//"encoding/xml"
 	"fmt"
-	"gosyn/lexer"
-	"gosyn/output/colorman"
+	"github.com/zerobias/gosyn/lexer"
+	"github.com/zerobias/gosyn/output/colorman"
 	"reflect"
 	"strconv"
 )

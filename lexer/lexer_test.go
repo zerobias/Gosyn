@@ -2,7 +2,7 @@ package lexer
 
 import (
 	//"fmt"
-	. "gosyn/testingtools"
+	. "github.com/zerobias/gosyn/testingtools"
 	"reflect"
 	"testing"
 )

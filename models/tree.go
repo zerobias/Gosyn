@@ -2,7 +2,7 @@ package models
 
 import (
 	//"fmt"
-	"gosyn/lexer"
+	"github.com/zerobias/gosyn/lexer"
 )
 
 type PTreeNode *TreeNode

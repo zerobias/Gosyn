@@ -2,10 +2,10 @@ package controller
 
 import (
 	"errors"
-	"gosyn/lexer"
-	"gosyn/models"
-	"gosyn/output"
-	. "gosyn/output/colorman"
+	"github.com/zerobias/gosyn/lexer"
+	"github.com/zerobias/gosyn/models"
+	"github.com/zerobias/gosyn/output"
+	. "github.com/zerobias/gosyn/output/colorman"
 	"strconv"
 	"strings"
 )
