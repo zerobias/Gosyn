@@ -6,15 +6,15 @@ import (
 	"io/ioutil"
 	//"log"
 	//"bytes"
-	"gosyn/lexer"
-	"gosyn/models"
+	"github.com/zerobias/gosyn/lexer"
+	"github.com/zerobias/gosyn/models"
 	"os"
 	//"strings"
 	//"unicode/utf8"
 	"bufio"
 	"encoding/xml"
-	"gosyn/output"
-	. "gosyn/output/colorman"
+	"github.com/zerobias/gosyn/output"
+	. "github.com/zerobias/gosyn/output/colorman"
 )
 
 const space = " " //TODO delete this

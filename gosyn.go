@@ -2,12 +2,12 @@ package main
 
 import (
 	"fmt"
-	"gosyn/controller"
+	"github.com/zerobias/gosyn/controller"
 	//"gosyn/models"
-	"gosyn/lexer"
-	"gosyn/output"
-	"gosyn/output/htmlreport"
-	"gosyn/utils"
+	"github.com/zerobias/gosyn/lexer"
+	"github.com/zerobias/gosyn/output"
+	"github.com/zerobias/gosyn/output/htmlreport"
+	"github.com/zerobias/gosyn/utils"
 )
 
 func main() {

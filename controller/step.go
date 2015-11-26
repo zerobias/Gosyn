@@ -2,8 +2,8 @@ package controller
 
 import (
 	"fmt"
-	"gosyn/lexer"
-	"gosyn/models"
+	"github.com/zerobias/gosyn/lexer"
+	"github.com/zerobias/gosyn/models"
 )
 
 func StepSliceConv(ses []models.StringElement) *[]Step {
