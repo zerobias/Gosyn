@@ -1,4 +1,4 @@
-package debug
+package lexer
 
 type EnumType int8
 

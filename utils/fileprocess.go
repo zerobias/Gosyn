@@ -6,15 +6,15 @@ import (
 	"io/ioutil"
 	//"log"
 	//"bytes"
-	"gosyn/debug"
 	"gosyn/lexer"
 	"gosyn/models"
 	"os"
 	//"strings"
 	//"unicode/utf8"
-	"encoding/xml"
-	//"gosyn/output"
 	"bufio"
+	"encoding/xml"
+	"gosyn/output"
+	. "gosyn/output/colorman"
 )
 
 const space = " " //TODO delete this
@@ -61,24 +61,11 @@ func ParseXML(rawData []byte) (tokens lexer.TokenList, rules []models.Rule) {
 	var xmlFile models.XMLRoot
 	parseError := xml.Unmarshal(rawData, &xmlFile)
 	if parseError != nil {
-		debug.ColorPrint(debug.BOLDRED, parseError.Error())
-	} /*else {
-		fmt.Println(string(rawData))
-		fmt.Println(terms)
-	}*/
+		output.ColorPrint(COL_RED_BB, 2, parseError.Error())
+	}
 	for _, term := range xmlFile.Terms { //TODO rename "terms"
 		tokens = append(tokens, *lexer.NewToken(term.Name, lexer.GetClassByName(term.Class), term.Value))
 	}
 	rules = xmlFile.Rules
-	//output.PrintRules(xmlFile.Rules)
 	return
 }
-
-//TODO remove inactive code
-/*func ParseJSONLexemes(filename string) (tokens lexer.LexemeSequence) {
-	rawjson := LoadfileDefault(filename)
-	dec := json.NewDecoder(strings.NewReader(rawjson))
-	dec.Decode(&tokens)
-	return tokens
-}
-*/

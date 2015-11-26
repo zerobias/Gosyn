@@ -7,9 +7,6 @@ import (
 	"gosyn/models"
 	"gosyn/output"
 	. "gosyn/output/colorman"
-	/*"log"
-	"os"
-	"os/exec"*/
 	"strconv"
 )
 
@@ -21,16 +18,8 @@ var (
 
 //Init and control of parsing
 func SyntaxCycle(sequence *lexer.LexemeSequence, syntaxRules []models.Rule) models.PTreeNode {
-	//source = *sequence.Transform()
 	seq = *sequence
 	rules = syntaxRules
-	/*output.PrintString(0, "\nSyntaxCycle SEQ")
-	for _, lex := range []lexer.Lexeme(*sequence) {
-		output.PrintString(0, lex.Name, (*(lex.Value)).String())
-	}*/
-	/*for _, ptr := range source.GetChilds() {
-		fmt.Println((*ptr).Assocciated.Name)
-	}*/
 	startRule := "program"
 	output.PrintString(0, *GetRule(startRule)) //TODO catch nil
 	output.Par = *new(output.Paragraph)
@@ -69,7 +58,6 @@ func Translate(word *models.StringElement, parentCursor *SeqIterator) (result bo
 	if isError(error) {
 		return false
 	}
-	//fmt.Println("Element ", (*element.Value).String())
 	cursor.buffer.StringElement = *word
 	switch word.Type() {
 	case models.ST_CLASS:
@@ -155,12 +143,6 @@ func Translate(word *models.StringElement, parentCursor *SeqIterator) (result bo
 		}
 		output.Par.SendPair(deep, COL_GREEN, "RES", result, word.Type()) //TODO print output for failures too
 	}
-	/*if word.Type() == models.ST_SEQ {
-		output.Par.SendPair(deep, COL_RED_BB, "result", cursor.buffer.StringElement.Type())
-	} else {
-		output.Par.SendPair(deep, COL_RED_BB, "result",
-			cursor.buffer.StringElement.Type(), cursor.buffer.StringElement.Value)
-	}*/
 	return
 }
 

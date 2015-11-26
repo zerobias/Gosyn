@@ -2,18 +2,11 @@ language: go
 
 go:
   - tip
-
-sudo: false
-
-before_install:
-  - go get github.com/zerobias/gosyn/testingtools
-  - go get github.com/zerobias/gosyn/lexer
-  - go get github.com/zerobias/gosyn/output/colorman
-  - go get github.com/zerobias/gosyn/output
-  - go get github.com/zerobias/gosyn/models
+install:
   - go get github.com/zerobias/gosyn/controller
-  - go get github.com/zerobias/gosyn/debug
-  - go get github.com/zerobias/gosyn/utils
 
 script:
-cd $HOME/gopath/src/github.com/zerobias
+  - go get -t ./...
+  - go build ./controller/
+  - go build ./lexer/
+  - go install

@@ -11,7 +11,7 @@ func HandleSource(recieved string) *LiteralString {
 
 func removeSpecialChars(recieved string) *LiteralString { //TODO remove result sending
 	trim := strings.TrimSpace(recieved)
-	result := *NewLS()
+	result := *NewLiteralString()
 	for i, ch := range []rune(trim) {
 		r := transformSpecSymbols(ch)
 		if checkRune(r, result.AsRune()) {
@@ -41,8 +41,6 @@ const (
 )
 
 func transformSpecSymbols(ch rune) rune {
-	//rs := string(ch)
-	//fmt.Println(rs, ch)
 	if ch == rune_SPACE || ch == rune_TAB || ch == rune_LINE {
 		return ' '
 	}

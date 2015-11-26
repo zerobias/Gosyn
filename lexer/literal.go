@@ -43,15 +43,15 @@ func (ls LiteralString) Len() int {
 	return len([]Literal(ls))
 }
 
-func NewLS() *LiteralString {
+func NewLiteralString() *LiteralString {
 	slice := make([]Literal, 0)
 	newLs := *new(LiteralString)
 	newLs = slice
 	return &newLs
 }
 
-func NewLiteralString(str string) *LiteralString {
-	result := NewLS()
+func NewLStringText(str string) *LiteralString { //TODO remove, possibly not used
+	result := NewLiteralString()
 	for i, val := range []rune(strings.ToLower(str)) {
 		(*result).AddNew(val, i)
 	}
